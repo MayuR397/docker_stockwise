@@ -1,10 +1,12 @@
-import puppeteer from "puppeteer";
+import puppeteer from 'puppeteer-extra';
+import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import path from "path";
 import fs from "fs";
 import os from "os";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import dotenv from "dotenv";
+puppeteer.use(StealthPlugin());
 dotenv.config();
 
 // Define __filename and __dirname for ES modules
@@ -46,6 +48,8 @@ async function runPuppeteer() {
       "--disable-setuid-sandbox",
       "--disable-gpu",
       "--window-size=1280,800", // Ensure consistent viewport
+      '--disable-web-security',
+      '--disable-features=IsolateOrigins,site-per-process',
     ],
     defaultViewport: {
       width: 1280,
@@ -54,6 +58,17 @@ async function runPuppeteer() {
   });
 
   const page = await browser.newPage();
+
+  // Set User-Agent to avoid detection
+  await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
+
+  // Log failed responses
+  // page.on("response", (response) => {
+  //   if (!response.ok()) {
+  //     console.log(`Failed to load: ${response.url()} - ${response.status()}`);
+  //   }
+  // });
+
   await page.goto(
     "https://www.moneycontrol.com/india/stockpricequote/engineering-heavy/gardenreachshipbuildersengineers/GRS01#advchart",
     {
@@ -298,9 +313,9 @@ async function getDataChartsDaily5Min(page, stock) {
 async function manuallyIndicatorsSetter(page) {
   // console.log("Sleeping for a minute...");
   // sleep(60000)
-  // await page.waitForSelector("#wzrk-cancel", { visible: true });
-  // await page.click("#wzrk-cancel");
-  // console.log("Button clicked successfully!");
+  await page.waitForSelector("#wzrk-cancel", { visible: true });
+  await page.click("#wzrk-cancel");
+  console.log("Button clicked successfully!");
 
   try {
     const iframeElement = await page.waitForSelector(
