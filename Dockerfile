@@ -1,11 +1,23 @@
-FROM ghcr.io/puppeteer/puppeteer:23.2.0
+FROM node:18-slim  # Use a lightweight Node.js image
 
+# Install Chromium
+RUN apt-get update && apt-get install -y chromium
+
+# Set environment variables for puppeteer-core
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
+# Set the working directory
 WORKDIR /usr/src/app
 
+# Copy package.json and package-lock.json
 COPY package*.json ./
+
+# Install dependencies
 RUN npm ci
+
+# Copy the rest of the application code
 COPY . .
+
+# Command to run the application
 CMD ["node", "index.js"]

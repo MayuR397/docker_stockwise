@@ -1,5 +1,6 @@
-import puppeteer from 'puppeteer-extra';
-import StealthPlugin from 'puppeteer-extra-plugin-stealth';
+import puppeteer from "puppeteer-extra";
+import puppeteerCore from 'puppeteer-core';
+import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import path from "path";
 import fs from "fs";
 import os from "os";
@@ -34,7 +35,7 @@ async function runPuppeteer() {
   );
 
   // Create a new Chrome profile every time the script runs
-  const browser = await puppeteer.launch({
+  const browser = await puppeteerCore.launch({
     executablePath:
       process.env.NODE_ENV === "production"
         ? process.env.PUPPETEER_EXECUTABLE_PATH
@@ -48,8 +49,8 @@ async function runPuppeteer() {
       "--disable-setuid-sandbox",
       "--disable-gpu",
       "--window-size=1280,800", // Ensure consistent viewport
-      '--disable-web-security',
-      '--disable-features=IsolateOrigins,site-per-process',
+      "--disable-web-security",
+      "--disable-features=IsolateOrigins,site-per-process",
     ],
     defaultViewport: {
       width: 1280,
@@ -60,19 +61,22 @@ async function runPuppeteer() {
   const page = await browser.newPage();
 
   // Set User-Agent to avoid detection
-  await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
+  await page.setUserAgent(
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+  );
 
   // Log failed responses
-  // page.on("response", (response) => {
-  //   if (!response.ok()) {
-  //     console.log(`Failed to load: ${response.url()} - ${response.status()}`);
-  //   }
-  // });
+  page.on("response", (response) => {
+    if (!response.ok()) {
+      console.log(`Failed to load: ${response.url()} - ${response.status()}`);
+    }
+  });
 
   await page.goto(
     "https://www.moneycontrol.com/india/stockpricequote/engineering-heavy/gardenreachshipbuildersengineers/GRS01#advchart",
     {
-      waitUntil: "domcontentloaded",
+      waitUntil: "networkidle2", // Wait until network is idle
+      timeout: 60000, // Increase timeout to 60 seconds
     }
   );
 
