@@ -12,7 +12,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Ensure the screenshots directory exists
-const screenshotsDir = path.join(__dirname, "screenshots");
+const screenshotsDir = path.join(os.tmpdir(), "screenshots");
 if (!fs.existsSync(screenshotsDir)) {
   fs.mkdirSync(screenshotsDir);
 }
@@ -26,7 +26,7 @@ async function runPuppeteer() {
   stockDataArray = [];
 
   const chromeProfilePath = path.join(
-    os.homedir(),
+    os.tmpdir(),
     "Documents",
     "puppeteer_temp_chrome_profile"
   );
@@ -168,9 +168,6 @@ async function runPuppeteer() {
         return element ? element.innerText : null;
       });
       console.log("dEMA50:", EMA50);
-
-      const screenshotPath = path.join(screenshotsDir, `Normal_${stock}.png`);
-      await page.screenshot({ path: screenshotPath });
 
       return { currentPrice, EMA10, EMA21, EMA50 };
     } catch (error) {
