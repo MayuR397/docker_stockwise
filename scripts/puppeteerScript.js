@@ -296,6 +296,8 @@ async function getDataChartsDaily5Min(page, stock) {
 }
 
 async function manuallyIndicatorsSetter(page) {
+  console.log("Sleeping for a minute...");
+  sleep(60000)
   await page.waitForSelector("#wzrk-cancel", { visible: true });
   await page.click("#wzrk-cancel");
   console.log("Button clicked successfully!");
