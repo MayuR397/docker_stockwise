@@ -4,7 +4,7 @@ import fs from "fs";
 import os from "os";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
 
 // Define __filename and __dirname for ES modules
@@ -76,7 +76,10 @@ async function runPuppeteer() {
 
   async function useChromeProfile() {
     const browser = await puppeteer.launch({
-      executablePath: "/usr/bin/google-chrome-stable", // Path to the installed Chrome on Render
+      executablePath:
+        process.env.NODE_ENV === "production"
+          ? process.env.PUPPETEER_EXECUTABLE_PATH
+          : puppeteer.executablePath(), // Path to the installed Chrome on Render
       headless: true, // Set to true for headless mode
       args: [
         `--user-data-dir=${chromeProfilePath}`,
