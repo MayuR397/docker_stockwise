@@ -1,4 +1,4 @@
-FROM node:18-slim  # Use a lightweight Node.js image
+FROM node:18-slim 
 
 # Install Chromium
 RUN apt-get update && apt-get install -y chromium
