@@ -36,21 +36,14 @@ async function runPuppeteer() {
 
   // Create a new Chrome profile every time the script runs
   const browser = await puppeteerCore.launch({
-    executablePath:
-      process.env.NODE_ENV === "production"
-        ? process.env.PUPPETEER_EXECUTABLE_PATH
-        : puppeteer.executablePath(), // Path to the installed Chrome on Render
-    headless: true, // Set to true for headless mode
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium',
+    headless: true,
     args: [
-      `--user-data-dir=${chromeProfilePath}`,
-      "--disable-images",
-      "--disable-javascript",
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-gpu",
-      "--window-size=1280,800", // Ensure consistent viewport
-      "--disable-web-security",
-      "--disable-features=IsolateOrigins,site-per-process",
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-gpu',
+      '--window-size=1280,800',
     ],
     defaultViewport: {
       width: 1280,
